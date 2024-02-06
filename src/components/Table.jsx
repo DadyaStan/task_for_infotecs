@@ -1,6 +1,7 @@
 import React from "react";
 import User from "./User";
 
+
 export default class Table extends React.Component {
     constructor(props) {
         super(props)
@@ -9,10 +10,12 @@ export default class Table extends React.Component {
             isLoaded: false,
             users: []
         }
+
+        this.api = props.api
     }
 
     componentDidMount() {
-        fetch('https://dummyjson.com/users?limit=100')
+        fetch(this.api)
         .then(res => res.json())
         .then(
             (result) => {
