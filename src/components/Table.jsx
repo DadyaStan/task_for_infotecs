@@ -8,14 +8,13 @@ export default class Table extends React.Component {
         this.state = {
             error: null,
             isLoaded: false,
+            api: props.api,
             users: []
         }
-
-        this.api = props.api
     }
 
     componentDidMount() {
-        fetch(this.api)
+        fetch(this.state.api)
         .then(res => res.json())
         .then(
             (result) => {
@@ -34,6 +33,7 @@ export default class Table extends React.Component {
     }
 
     render() {
+        console.log(this.state.api)
         const {error, isLoaded} = this.state;
         if (error) {
             return  <div className="table">

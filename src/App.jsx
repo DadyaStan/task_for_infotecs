@@ -1,5 +1,5 @@
 import React from "react";
-import Table from "./components/Table";
+import User from "./components/User";
 import { keyboard } from "@testing-library/user-event/dist/keyboard";
 
 class App extends React.Component {
@@ -7,15 +7,67 @@ class App extends React.Component {
       super(props)
 
       this.state = {
-        keyFilter: null,
-        inputData: null,
+        error: null,
+        isLoaded: false,
+        keyFilter: '',
+        inputData: '',
+        users: [],
         api: 'https://dummyjson.com/users'
       }
       
     }
+
+    componentDidMount() {
+      fetch(this.state.api)
+      .then(res => res.json())
+      .then(
+          (result) => {
+              this.setState({
+                  isLoaded: true,
+                  users: result.users
+              })
+          },
+          (error) => {
+              this.setState({
+                  isLoaded: true,
+                  error
+              })
+          }
+      )
+  }
+
+  doUpdate(a, b) {
+    if (!this.state.keyFilter || !this.state.inputData) {
+      this.state.api = 'https://dummyjson.com/users'
+    } else {
+      fetch(a + this.state.keyFilter + b + this.state.inputData)
+        .then(res => res.json())
+        .then(
+            (result, error) => {
+                if (result.total = 0) {
+                  this.setState({
+                    isLoaded: true,
+                    error
+                })} else {
+                this.setState({
+                    isLoaded: true,
+                    users: result.users
+                })
+              }
+            },
+            (error) => {
+                this.setState({
+                    isLoaded: true,
+                    error
+                })
+            }
+        )
+      }
+  }
     
 
-    render() {
+
+  render() {
       return (
       <div className="container">
         <div className="content">
@@ -47,12 +99,27 @@ class App extends React.Component {
                     <div
                         className="searcher__button"
                         id="searcher"
-                        onClick={() => this.setState({ api: 'https://dummyjson.com/users/filter?key=hair.color&value=Brown' })}
+                        onClick={() => this.doUpdate('https://dummyjson.com/users/filter?key=', '&value=')}
                         ><i class="fa-solid fa-magnifying-glass"></i>
                     </div>
                 </form>
             </div>
-          <Table api={this.state.api}/>
+            <div className="table">
+                <div className="table__types">
+                    <div className="table-type table-split">ФИО</div>
+                    <div className="table-type table-split">Возраст</div>
+                    <div className="table-type table-split">Пол</div>
+                    <div className="table-type table-split">Номер Телефона</div>
+                    <div className="table-type table-split">Адрес</div>
+                    <div className="table-type table-split">Доп</div>
+                </div>
+                
+                <div className="table__data">
+                    {this.state.users.map((user) => (
+                        <User key={user.id} user={user} />
+                    ))}
+                </div>
+            </div>
         </div>
       </div>)
     }
