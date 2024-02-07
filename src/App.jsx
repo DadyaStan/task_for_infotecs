@@ -20,7 +20,11 @@ class App extends React.Component {
   fullTableLink = 'https://dummyjson.com/users'
 
   componentDidMount() {
-    fetch(this.state.api)
+    this.getUpdateFetch(this.fullTableLink)
+  }
+
+  getUpdateFetch(inputApi) {
+    fetch(inputApi)
       .then(res => res.json())
       .then(
         (result) => {
@@ -43,31 +47,10 @@ class App extends React.Component {
       this.state.api = this.fullTableLink
     } else if (this.state.keyFilter === 'reset') {
       this.state.api = this.fullTableLink
-      this.componentDidMount()
+      this.getUpdateFetch(this.fullTableLink)
     } else {
-      fetch(filterLink + this.state.keyFilter + valueLink + this.state.inputData)
-        .then(res => res.json())
-        .then(
-          (result, error) => {
-            if (result.total = 0) {
-              this.setState({
-                isLoaded: true,
-                error
-              })
-            } else {
-              this.setState({
-                isLoaded: true,
-                users: result.users
-              })
-            }
-          },
-          (error) => {
-            this.setState({
-              isLoaded: true,
-              error
-            })
-          }
-        )
+      const newLink = filterLink + this.state.keyFilter + valueLink + this.state.inputData
+      this.getUpdateFetch(newLink)
     }
   }
 
@@ -93,7 +76,7 @@ class App extends React.Component {
                 <option value="age">Возраст</option>
                 <option value="gender">Пол</option>
                 <option value="phone">Номер телефона</option>
-                <option value="address.city">город</option>
+                <option value="address.city">Город</option>
                 <option value="address.address">Адрес</option>
                 <option value="reset">Полный список</option>
               </select>
